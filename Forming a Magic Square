@@ -1,0 +1,175 @@
+/*
+We define a magic square to be an  matrix of distinct positive integers from  to  where the sum of any row, column, or diagonal of length  is always equal to the same number: the magic constant.
+
+You will be given a  matrix  of integers in the inclusive range . We can convert any digit  to any other digit  in the range  at cost of . Given , convert it into a magic square at minimal cost. Print this cost on a new line.
+
+Note: The resulting magic square must contain distinct integers in the inclusive range .
+
+For example, we start with the following matrix :
+
+5 3 4
+1 5 8
+6 4 2
+We can convert it to the following magic square:
+
+8 3 4
+1 5 9
+6 7 2
+This took three replacements at a cost of .
+
+Function Description
+
+Complete the formingMagicSquare function in the editor below. It should return an integer that represents the minimal total cost of converting the input square to a magic square.
+
+formingMagicSquare has the following parameter(s):
+
+s: a  array of integers
+Input Format
+
+Each of the lines contains three space-separated integers of row .
+
+Constraints
+
+Output Format
+
+Print an integer denoting the minimum cost of turning matrix  into a magic square.
+*/
+
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// Return if given vector denote the magic square or not. 
+bool is_magic_square(vector<int> v)
+{
+    int a[3][3];
+
+    // Convert vector into 3 X 3 matrix 
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            a[i][j] = v[3 * i + j];
+
+    int s = 0;
+    for (int j = 0; j < 3; ++j)
+        s += a[0][j];
+
+    // Checking if each row sum is same 
+    for (int i = 1; i <= 2; ++i) {
+        int tmp = 0;
+        for (int j = 0; j < 3; ++j)
+            tmp += a[i][j];
+        if (tmp != s)
+            return 0;
+    }
+
+    // Checking if each column sum is same 
+    for (int j = 0; j < 3; ++j) {
+        int tmp = 0;
+        for (int i = 0; i < 3; ++i)
+            tmp += a[i][j];
+        if (tmp != s)
+            return 0;
+    }
+
+    // Checking if diagonal 1 sum is same 
+    int tmp = 0;
+    for (int i = 0; i < 3; ++i)
+        tmp += a[i][i];
+    if (tmp != s)
+        return 0;
+
+    // Checking if diagnol 2 sum is same 
+    tmp = 0;
+    for (int i = 0; i < 3; ++i)
+        tmp += a[2 - i][i];
+    if (tmp != s)
+        return 0;
+    return 1;
+}
+
+// Generating all magic square 
+void find_magic_squares(vector<vector<int> >& magic_squares)
+{
+    vector<int> v(9);
+
+    // Initialing the vector 
+    for (int i = 0; i < 9; ++i)
+        v[i] = i + 1;
+
+    // Producing all permutation of vector 
+    // and checking if it denote the magic square or not. 
+    do {
+        if (is_magic_square(v)) {
+            magic_squares.push_back(v);
+        }
+    } while (next_permutation(v.begin(), v.end()));
+}
+
+// Return sum of difference between each element of two vector 
+int diff(vector<int> a, vector<int> b)
+{
+    int res = 0;
+
+    for (int i = 0; i < 9; ++i)
+        res += abs(a[i] - b[i]);
+
+    return res;
+}
+
+// Wrapper function 
+int wrapper(vector<int> v)
+{
+    int res = INT_MAX;
+    vector<vector<int> > magic_squares;
+
+    // generating all magic square 
+    find_magic_squares(magic_squares);
+
+    for (int i = 0; i < magic_squares.size(); ++i) {
+
+        // Finding the difference with each magic square 
+        // and assigning the minimum value. 
+        res = min(res, diff(v, magic_squares[i]));
+    }
+    return res;
+}
+
+
+int formingMagicSquare(vector<vector<int>> s) {
+    vector<int> my_vec;
+    for (auto r : s)
+    {
+        for (auto v : r)
+        {
+            my_vec.push_back(v);
+        }
+    }
+    return wrapper(my_vec);
+}
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    vector<vector<int>> s(3);
+    for (int i = 0; i < 3; i++) {
+        s[i].resize(3);
+
+        for (int j = 0; j < 3; j++) {
+            cin >> s[i][j];
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    int result = formingMagicSquare(s);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+
+
