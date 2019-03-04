@@ -5,22 +5,40 @@ using namespace std;
 vector<string> split_string(string);
 
 // Complete the climbingLeaderboard function below.
+// Complete the climbingLeaderboard function below.
 vector<int> climbingLeaderboard(vector<int> scores, vector<int> alice) {
-  vector<int> result;
-  map<int, int> rank_map; // to populate the ranks
+    vector <int> result;
+    stack<int> m_stack;
+    for (auto s : scores)
+    {
+        if (m_stack.empty())
+            m_stack.push(s);
+        else if (m_stack.top() > s)
+            m_stack.push(s);
+    }
+    
+    for (auto s : alice)
+    {
+        int trank=0;
+        if (!m_stack.empty() && s < m_stack.top())
+        {
+            trank = m_stack.size() + 1;
+        }
+        else
+        {
+            while ( !m_stack.empty() && s >= m_stack.top())
+            {
+                m_stack.pop();
+            }
+            trank = m_stack.size() + 1;
+        }
+        result.push_back(trank);
+    }
+    
 
-  // populate the ranks
-  for (auto s : scores) {
-      rank_map[s] += 1;
-  }
-  // calculate the players rank
-  for (auto ps : alice) {
-    rank_map[ps] += 1;
-    int trank = distance(rank_map.find(ps), rank_map.end());
-    result.push_back(trank);
-  }
-  rank_map.clear();
-  return result;
+    return result;
+
+
 }
 
 int main() {
